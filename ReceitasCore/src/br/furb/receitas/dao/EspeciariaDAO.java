@@ -1,36 +1,33 @@
-package br.com.receitas.dao;
+package br.furb.receitas.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-import br.com.receitas.bean.ReceitaBean;
-import br.com.receitas.db.ConexaoSQL;
+import br.furb.receitas.bean.EspeciariaBean;
+import br.furb.receitas.db.ConexaoSQL;
 
-public class ReceitaDAO 
+public class EspeciariaDAO 
 {
-	private static final String TABELA_ID = "RECEITA_ID";
+	private static final String TABELA_ID = "ESPECIARIA_ID";
 	
-	public static void incluir(ReceitaBean receita) throws SQLException
+	public static void incluir(EspeciariaBean especiaria) throws SQLException
 	{
-		String sql = "insert into RECEITA (id, descricao, id_usuario) values (?, ?, ?)";
+		String sql = "insert into ESPECIARIA (id, nome) values (?, ?)";
 		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
 		{
 			conSQL.abrirConexao();
 			
-			receita.setOID(conSQL.proximoID(TABELA_ID));
+			especiaria.setOID(conSQL.proximoID(TABELA_ID));
 			
 			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
 			try
 			{
-				ps.setInt(1, receita.getOID());
-				ps.setString(2, receita.getDescricao());
-				ps.setInt(3, receita.getUsuario());
+				ps.setInt(1, especiaria.getOID());
+				ps.setString(2, especiaria.getNome());
 				
 				ps.executeUpdate();
 			}
@@ -47,7 +44,7 @@ public class ReceitaDAO
 	
 	public static void excluirTodos() throws SQLException
 	{
-		String sql = "delete from RECEITA";
+		String sql = "delete from ESPECIARIA";
 		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
@@ -70,9 +67,9 @@ public class ReceitaDAO
 		}
 	}
 	
-	public static ReceitaBean localizar(int oid) throws SQLException
+	public static EspeciariaBean localizar(String nome) throws SQLException
 	{
-		String sql = "select * from RECEITA where id = ?";		
+		String sql = "select * from ESPECIARIA where upper(nome) = upper(?)";
 		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
@@ -82,19 +79,17 @@ public class ReceitaDAO
 			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
 			try
 			{
-				ps.setInt(1, oid);
+				ps.setString(1, nome);
 				
 				ResultSet rs = ps.executeQuery();
-				
 				if (rs.next())
 				{
-					ReceitaBean receita = new ReceitaBean();
+					EspeciariaBean especiaria = new EspeciariaBean();
 					
-					receita.setOID(rs.getInt("id"));
-					receita.setUsuario(rs.getInt("id_usuario"));
-					receita.setDescricao(rs.getString("descricao"));
+					especiaria.setOID(rs.getInt("id"));
+					especiaria.setNome(rs.getString("nome"));
 					
-					return receita;
+					return especiaria;
 				}
 			}
 			finally
@@ -110,11 +105,9 @@ public class ReceitaDAO
 		return null;
 	}
 	
-	public static List<ReceitaBean> listarDoUsuario(int usuario) throws SQLException
+	public static EspeciariaBean localizar(int id) throws SQLException
 	{
-		String sql = "select * from RECEITA where id_usuario = ?";
-		
-		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
+		String sql = "select * from ESPECIARIA where id = ?";
 		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
@@ -124,19 +117,17 @@ public class ReceitaDAO
 			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
 			try
 			{
-				ps.setInt(1, usuario);
+				ps.setInt(1, id);
 				
 				ResultSet rs = ps.executeQuery();
-				
-				while (rs.next())
+				if (rs.next())
 				{
-					ReceitaBean receita = new ReceitaBean();
+					EspeciariaBean especiaria = new EspeciariaBean();
 					
-					receita.setOID(rs.getInt("id"));
-					receita.setUsuario(rs.getInt("id_usuario"));
-					receita.setDescricao(rs.getString("descricao"));
+					especiaria.setOID(rs.getInt("id"));
+					especiaria.setNome(rs.getString("nome"));
 					
-					receitas.add(receita);
+					return especiaria;
 				}
 			}
 			finally
@@ -149,6 +140,6 @@ public class ReceitaDAO
 			conSQL.fecharConexao();
 		}
 		
-		return receitas;
+		return null;
 	}
 }

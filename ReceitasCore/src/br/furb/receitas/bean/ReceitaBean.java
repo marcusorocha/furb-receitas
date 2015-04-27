@@ -1,13 +1,12 @@
-package br.com.receitas.bean;
+package br.furb.receitas.bean;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
 public class ReceitaBean 
 {
 	private int oid;
 	private String descricao;
 	private int usuario;
+	
+	public ReceitaBean() { } 
 	
 	public int getOID()
 	{

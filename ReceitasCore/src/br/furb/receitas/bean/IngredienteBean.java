@@ -1,4 +1,4 @@
-package br.com.receitas.bean;
+package br.furb.receitas.bean;
 
 public class IngredienteBean
 {

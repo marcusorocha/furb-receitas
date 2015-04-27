@@ -1,4 +1,4 @@
-package br.com.receitas.bean;
+package br.furb.receitas.bean;
 
 import java.util.Date;
 

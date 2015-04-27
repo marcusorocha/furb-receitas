@@ -1,4 +1,4 @@
-package br.com.receitas.dao;
+package br.furb.receitas.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,8 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.receitas.bean.IngredienteBean;
-import br.com.receitas.db.ConexaoSQL;
+import br.furb.receitas.bean.IngredienteBean;
+import br.furb.receitas.db.ConexaoSQL;
 
 public class IngredienteDAO 
 {

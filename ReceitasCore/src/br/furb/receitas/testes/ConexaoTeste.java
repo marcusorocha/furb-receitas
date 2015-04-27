@@ -1,10 +1,10 @@
-package br.com.receitas.testes;
+package br.furb.receitas.testes;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import br.com.receitas.db.ConexaoSQL;
+import br.furb.receitas.db.ConexaoSQL;
 
 public class ConexaoTeste {
 

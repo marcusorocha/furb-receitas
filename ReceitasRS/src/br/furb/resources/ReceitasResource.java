@@ -10,10 +10,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import br.com.receitas.bean.ReceitaBean;
-import br.com.receitas.bean.UsuarioBean;
-import br.com.receitas.dao.ReceitaDAO;
-import br.com.receitas.dao.UsuarioDAO;
+import br.furb.receitas.bean.ReceitaBean;
+import br.furb.receitas.bean.UsuarioBean;
+import br.furb.receitas.dao.ReceitaDAO;
+import br.furb.receitas.dao.UsuarioDAO;
 
 @Path("receitas")
 public class ReceitasResource 
@@ -23,21 +23,26 @@ public class ReceitasResource
 	@Produces(MediaType.TEXT_PLAIN)
 	public String listarReceitas()
 	{			
-		return null; 
+		return null;
 	}
 	
 	@GET
 	@Path("lista-usuario/{usuario}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listarReceitas(@PathParam("usuario") String nomeUsuario)
-	{			
+	{		
 		try
 		{
 			UsuarioBean usuario = UsuarioDAO.localizar(nomeUsuario);
 			
-			List<ReceitaBean> receitas = ReceitaDAO.listarDoUsuario(usuario.getOID());
+			if (usuario != null)
+			{			
+				List<ReceitaBean> receitas = ReceitaDAO.listarDoUsuario(usuario.getOID());
+							
+				return Response.ok(receitas).build();
+			}
 			
-			return Response.ok(receitas).build();
+			return Response.noContent().build();
 		}
 		catch (SQLException sqlEx)
 		{			

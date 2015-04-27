@@ -1,12 +1,12 @@
-package br.com.receitas.dao;
+package br.furb.receitas.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import br.com.receitas.bean.UsuarioBean;
-import br.com.receitas.db.ConexaoSQL;
+import br.furb.receitas.bean.UsuarioBean;
+import br.furb.receitas.db.ConexaoSQL;
 
 public class UsuarioDAO
 {
