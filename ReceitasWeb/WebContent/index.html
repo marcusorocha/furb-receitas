@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Versão Web do Aplicativo de Receitas</title>
+	<style>
+			
+		label {
+			font-family: Arial;
+			font-size: smaller;
+		}
+		
+	</style>
+	<script type='text/javascript' src='js/funcoes.js'></script>
+</head>
+<body>
+	<form>
+		<label for="contry_code">Código do País:</label>			
+		<input
+			type="text" 
+			name="country_code" 
+			pattern="[A-Z]{3}"
+			maxlength="3"
+			title="Três letras com o código do país"
+			onkeypress="return isValorValido(event, this);">
+		
+		<input 
+			type="button" 
+			value="Enviar"
+			onclick="validarCampos();">
+	</form>
+	
+	<input 
+		type="button" 
+		value="Enviar Requisição AJAX"
+		onclick="loadXMLDoc();">
+	
+	<div id="myDiv"></div>
+</body>
+</html>
