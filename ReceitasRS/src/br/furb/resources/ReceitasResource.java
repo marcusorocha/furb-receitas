@@ -16,7 +16,7 @@ import br.furb.receitas.dao.ReceitaDAO;
 import br.furb.receitas.dao.UsuarioDAO;
 
 @Path("receitas")
-public class ReceitasResource 
+public class ReceitasResource
 {
 	@GET
 	@Path("lista-todas")
