@@ -3,6 +3,7 @@
 	<name>ReceitasRS</name>
 	<comment></comment>
 	<projects>
+		<project>ReceitasCore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

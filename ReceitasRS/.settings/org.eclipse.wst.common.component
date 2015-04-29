@@ -2,6 +2,9 @@
     <wb-module deploy-name="ReceitasRS">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <dependent-module archiveName="ReceitasCore.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ReceitasCore/ReceitasCore">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/ReceitasRS/build/classes"/>
         <property name="context-root" value="receitas-rs"/>
     </wb-module>
