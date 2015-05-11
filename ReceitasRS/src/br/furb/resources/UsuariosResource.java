@@ -32,7 +32,7 @@ public class UsuariosResource
 			
 			if (usuario != null)
 				if (usuario.getSenha().equals(senha))
-					return Response.ok(usuario).build();		
+					return Response.ok(usuario).build();
 			
 			return Response.noContent().build();
 		}
