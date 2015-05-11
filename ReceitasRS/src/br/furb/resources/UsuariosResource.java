@@ -16,11 +16,18 @@ import br.furb.receitas.dao.UsuarioDAO;
 public class UsuariosResource
 {
 	/**
+	 * Autenticação do usuário
 	 * 
-	 * @param user
-	 * @param password
-	 * @return Response 
-	 */	
+	 * caminho: /rs/usuarios/login
+	 * 
+	 * @param nome <code>String</code> contendo o nome do usuário. 
+	 * 
+	 * @param senha <code>String</code> contendo a senha do usuário.
+	 * 
+	 * @return Um objeto <code>Response</code> com o código de retorno http e com o 
+	 * o objeto JSON com os dados do usuário caso a autenticação seja bem sucedida.
+	 * 		
+	 */
 	@GET
 	@Path("login")
 	@Produces(MediaType.APPLICATION_JSON)

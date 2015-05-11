@@ -16,6 +16,6 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>receitas-rest-services</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/rs/*</url-pattern>
   </servlet-mapping>
 </web-app>
