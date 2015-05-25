@@ -4,6 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import br.furb.receitas.bean.EspeciariaBean;
 import br.furb.receitas.db.ConexaoSQL;
@@ -141,5 +143,43 @@ public class EspeciariaDAO
 		}
 		
 		return null;
+	}
+	
+	public static List<EspeciariaBean> listarTodas() throws SQLException
+	{
+		List<EspeciariaBean> especiarias = new ArrayList<EspeciariaBean>();
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			String sql = "select * from ESPECIARIA";
+			
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ResultSet rs = ps.executeQuery();
+				while (rs.next())
+				{
+					EspeciariaBean especiaria = new EspeciariaBean();
+					
+					especiaria.setOID(rs.getInt("id"));
+					especiaria.setNome(rs.getString("nome"));
+					
+					especiarias.add(especiaria);
+				}
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+		
+		return especiarias;
 	}
 }

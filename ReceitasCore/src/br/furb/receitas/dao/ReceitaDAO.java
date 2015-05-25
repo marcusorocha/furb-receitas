@@ -14,7 +14,18 @@ public class ReceitaDAO
 {
 	private static final String TABELA_ID = "RECEITA_ID";
 	
-	public static void incluir(ReceitaBean receita) throws SQLException
+	private static ReceitaBean popularReceita(ResultSet rs) throws SQLException
+	{
+		ReceitaBean receita = new ReceitaBean();
+		
+		receita.setOID(rs.getInt("id"));
+		receita.setUsuario(rs.getInt("id_usuario"));
+		receita.setDescricao(rs.getString("descricao"));
+		
+		return receita;
+	}
+	
+ 	public static void incluir(ReceitaBean receita) throws SQLException
 	{
 		String sql = "insert into RECEITA (id, descricao, id_usuario) values (?, ?, ?)";
 		
@@ -68,7 +79,7 @@ public class ReceitaDAO
 		{
 			conSQL.fecharConexao();
 		}
-	}
+	} 
 	
 	public static ReceitaBean localizar(int oid) throws SQLException
 	{
@@ -87,15 +98,7 @@ public class ReceitaDAO
 				ResultSet rs = ps.executeQuery();
 				
 				if (rs.next())
-				{
-					ReceitaBean receita = new ReceitaBean();
-					
-					receita.setOID(rs.getInt("id"));
-					receita.setUsuario(rs.getInt("id_usuario"));
-					receita.setDescricao(rs.getString("descricao"));
-					
-					return receita;
-				}
+					return popularReceita(rs);
 			}
 			finally
 			{
@@ -129,18 +132,84 @@ public class ReceitaDAO
 				ResultSet rs = ps.executeQuery();
 				
 				while (rs.next())
-				{
-					ReceitaBean receita = new ReceitaBean();
-					
-					receita.setOID(rs.getInt("id"));
-					receita.setUsuario(rs.getInt("id_usuario"));
-					receita.setDescricao(rs.getString("descricao"));
-					
-					receitas.add(receita);
-				}
+					receitas.add(popularReceita(rs));
 			}
 			finally
 			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+		
+		return receitas;
+	}
+	
+	public static List<ReceitaBean> listarTodas() throws SQLException
+	{
+		String sql = "select * from RECEITA";
+		
+		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next())
+					receitas.add(popularReceita(rs));
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+		
+		return receitas;
+	}
+	
+	public static List<ReceitaBean> listarComEspeciarias(String[] especiarias) throws SQLException
+	{	
+		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			String pin = conSQL.gerarParametros(especiarias.length);
+			
+			String sql = " SELECT * FROM RECEITA A WHERE A.ID IN "
+					   + " ( "
+					   + "   SELECT B.ID_RECEITA FROM INGREDIENTE B "
+					   + "   INNER JOIN ESPECIARIA C ON C.ID = B.ID_ESPECIARIA "
+					   + "   WHERE C.NOME IN ( " + pin  + " ) "
+					   + " ) ";
+						
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{				
+				for (int i = 0; i < especiarias.length; i++)
+					ps.setString(i + 1, especiarias[i].trim());
+				
+				ResultSet rs = ps.executeQuery();
+				
+				while (rs.next())
+					receitas.add(popularReceita(rs));
+			}
+			finally
+			{	
 				ps.close();
 			}
 		}

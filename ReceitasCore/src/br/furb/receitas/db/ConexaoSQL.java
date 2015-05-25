@@ -74,5 +74,16 @@ public class ConexaoSQL
 		
 		return cs.getInt(2);
 	}
+	
+	public String gerarParametros(int quantidade)
+	{
+		StringBuilder sb = new StringBuilder();
+		while (sb.length() < quantidade) 
+		{ 
+		    if (sb.length() > 0) sb.append(',');
+		    sb.append("?");
+		}
+		return sb.toString();
+	}
 
 }

@@ -2,8 +2,9 @@ package br.furb.resources;
 
 import java.sql.SQLException;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -14,7 +15,14 @@ import br.furb.receitas.dao.UsuarioDAO;
 
 @Path("usuarios")
 public class UsuariosResource
-{
+{	
+	@OPTIONS
+	@Path("login")
+	public Response login() 
+	{
+	    return Response.ok().build();
+	}
+	
 	/**
 	 * Autenticação do usuário
 	 * 
@@ -28,24 +36,26 @@ public class UsuariosResource
 	 * o objeto JSON com os dados do usuário caso a autenticação seja bem sucedida.
 	 * 		
 	 */
-	@GET
+	@POST
 	@Path("login")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(@HeaderParam("nome") String nome, @HeaderParam("senha") String senha) 
+	public Response login(@FormParam("nome") String nome, @FormParam("senha") String senha)
 	{
 		try
 		{
-			UsuarioBean usuario = UsuarioDAO.localizar(nome);
-			
-			if (usuario != null)
-				if (usuario.getSenha().equals(senha))
-					return Response.ok(usuario).build();
-			
+			if (nome != null)
+			{
+				UsuarioBean usuario = UsuarioDAO.localizar(nome);
+				
+				if (usuario != null)
+					if (usuario.getSenha().equals(senha))
+						return Response.ok(usuario).build();
+			}
 			return Response.noContent().build();
 		}
 		catch (SQLException sqlEx)
 		{			
 			return Response.serverError().build();
 		}
-	}	
+	}
 }
