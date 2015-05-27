@@ -3,38 +3,17 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Versão Web do Aplicativo de Receitas</title>
-	<style>
-			
-		label {
-			font-family: Arial;
-			font-size: smaller;
-		}
-		
-	</style>
-	<script type='text/javascript' src='js/funcoes.js'></script>
 </head>
 <body>
-	<form>
-		<label for="contry_code">Código do País:</label>			
-		<input
-			type="text" 
-			name="country_code" 
-			pattern="[A-Z]{3}"
-			maxlength="3"
-			title="Três letras com o código do país"
-			onkeypress="return isValorValido(event, this);">
-		
-		<input 
-			type="button" 
-			value="Enviar"
-			onclick="validarCampos();">
+	<span><b>Login de Usuário</b></span>
+	<form method="post" action="login">
+		<label for="nome_usuario">Nome Usuário:</label>			
+		<input type="text" name="nome_usuario">
+		<br/>
+		<label for="senha_usuario">Senha Usuário:</label>			
+		<input type="text" name="senha_usuario">
+		<br/>
+		<input type="submit" value="Enviar">
 	</form>
-	
-	<input 
-		type="button" 
-		value="Enviar Requisição AJAX"
-		onclick="loadXMLDoc();">
-	
-	<div id="myDiv"></div>
 </body>
 </html>

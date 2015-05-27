@@ -25,6 +25,16 @@ public class ReceitaDAO
 		return receita;
 	}
 	
+	private static List<ReceitaBean> popularReceitas(ResultSet rs) throws SQLException
+	{
+		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
+		
+		while (rs.next())
+			receitas.add(popularReceita(rs));
+		
+		return receitas;
+	}
+	
  	public static void incluir(ReceitaBean receita) throws SQLException
 	{
 		String sql = "insert into RECEITA (id, descricao, id_usuario) values (?, ?, ?)";
@@ -81,6 +91,33 @@ public class ReceitaDAO
 		}
 	} 
 	
+	public static boolean excluir(int oid) throws SQLException
+	{
+		String sql = "delete from RECEITA where id = ?";		
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ps.setInt(1, oid);
+				
+				return ps.executeUpdate() > 0;
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+	
 	public static ReceitaBean localizar(int oid) throws SQLException
 	{
 		String sql = "select * from RECEITA where id = ?";		
@@ -117,8 +154,6 @@ public class ReceitaDAO
 	{
 		String sql = "select * from RECEITA where id_usuario = ?";
 		
-		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
-		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
 		{
@@ -129,10 +164,7 @@ public class ReceitaDAO
 			{
 				ps.setInt(1, usuario);
 				
-				ResultSet rs = ps.executeQuery();
-				
-				while (rs.next())
-					receitas.add(popularReceita(rs));
+				return popularReceitas(ps.executeQuery());
 			}
 			finally
 			{
@@ -143,15 +175,11 @@ public class ReceitaDAO
 		{
 			conSQL.fecharConexao();
 		}
-		
-		return receitas;
 	}
 	
 	public static List<ReceitaBean> listarTodas() throws SQLException
 	{
-		String sql = "select * from RECEITA";
-		
-		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
+		String sql = "select * from RECEITA";		
 		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
@@ -161,10 +189,7 @@ public class ReceitaDAO
 			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
 			try
 			{
-				ResultSet rs = ps.executeQuery();
-				
-				while (rs.next())
-					receitas.add(popularReceita(rs));
+				return popularReceitas(ps.executeQuery());
 			}
 			finally
 			{
@@ -175,14 +200,10 @@ public class ReceitaDAO
 		{
 			conSQL.fecharConexao();
 		}
-		
-		return receitas;
 	}
 	
 	public static List<ReceitaBean> listarComEspeciarias(String[] especiarias) throws SQLException
 	{	
-		List<ReceitaBean> receitas = new ArrayList<ReceitaBean>();
-		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
 		{
@@ -203,10 +224,7 @@ public class ReceitaDAO
 				for (int i = 0; i < especiarias.length; i++)
 					ps.setString(i + 1, especiarias[i].trim());
 				
-				ResultSet rs = ps.executeQuery();
-				
-				while (rs.next())
-					receitas.add(popularReceita(rs));
+				return popularReceitas(ps.executeQuery());
 			}
 			finally
 			{	
@@ -217,7 +235,6 @@ public class ReceitaDAO
 		{
 			conSQL.fecharConexao();
 		}
-		
-		return receitas;
 	}
+
 }

@@ -59,4 +59,10 @@ public class UsuarioBean
 	{
 		this.ultimoAcesso = ultimoAcesso;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return String.format("OID: %s, Nome: %s, Senha: %s, E-mail: %s", oid, nome, senha, email);
+	}
 }

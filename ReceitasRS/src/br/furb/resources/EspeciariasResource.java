@@ -16,6 +16,13 @@ import br.furb.receitas.dao.EspeciariaDAO;
 public class EspeciariasResource
 {
 
+	/**
+	 * Listar todas as especiarias cadastradas
+	 * <br><br>
+	 * caminho: <b>/rs/especiarias/lista-todas</b>
+	 * 
+	 * @return Um objeto JSON com a lista de todas as especiarias cadastradas
+	 */
 	@GET
 	@Path("lista-todas")
 	@Produces(MediaType.APPLICATION_JSON)
