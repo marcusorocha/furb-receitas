@@ -13,10 +13,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import br.furb.receitas.bean.EspeciariaBean;
 import br.furb.receitas.bean.ReceitaBean;
 import br.furb.receitas.bean.UsuarioBean;
-import br.furb.receitas.dao.EspeciariaDAO;
 import br.furb.receitas.dao.ReceitaDAO;
 import br.furb.receitas.dao.UsuarioDAO;
 import br.furb.utils.StringUtils;
@@ -65,9 +63,9 @@ public class ReceitaResource
 		{
 			Integer oid = Integer.valueOf(id);
 			
-			EspeciariaBean especiaria = EspeciariaDAO.localizar(oid);
+			ReceitaBean receita = ReceitaDAO.localizar(oid);
 			
-			return Response.ok(especiaria).build();
+			return Response.ok(receita).build();
 		}
 		catch (SQLException sqlEx)
 		{			
