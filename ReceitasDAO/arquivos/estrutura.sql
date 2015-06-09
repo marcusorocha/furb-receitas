@@ -9,7 +9,8 @@ create table RECEITA (
 	primary key (ID)
 );
 
-create table PASSOS (
+create table PASSO (
+	ID integer,
 	ID_RECEITA integer,
 	SEQUENCIA integer,
 	DESCRICAO varchar(500)
@@ -33,7 +34,7 @@ create table INGREDIENTE (
 	QUANTIDADE decimal(18,6)
 );
 
-alter table PASSOS add constraint FK_PASSOS_RECEITA foreign key (ID_RECEITA) references RECEITA (ID);
+alter table PASSO add constraint FK_PASSO_RECEITA foreign key (ID_RECEITA) references RECEITA (ID);
 alter table INGREDIENTE add constraint FK_INGREDIENTE_RECEITA foreign key (ID_RECEITA) references RECEITA (ID);
 alter table INGREDIENTE add constraint FK_INGREDIENTE_ESPECIARIA foreign key (ID_ESPECIARIA) references ESPECIARIA (ID);
 
@@ -64,3 +65,4 @@ begin
 end;
 
 SELECT * FROM RECEITA;
+SELECT * FROM PASSO;

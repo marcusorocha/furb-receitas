@@ -14,7 +14,15 @@ public class EspeciariaDAO
 {
 	private static final String TABELA_ID = "ESPECIARIA_ID";
 	
-	public static void incluir(EspeciariaBean especiaria) throws SQLException
+	public static boolean salvar(EspeciariaBean especiaria) throws SQLException
+	{
+		if (especiaria.getOID() == 0)
+			return incluir(especiaria);
+		else
+			return atualizar(especiaria);
+	}
+	
+	public static boolean incluir(EspeciariaBean especiaria) throws SQLException
 	{
 		String sql = "insert into ESPECIARIA (id, nome) values (?, ?)";
 		
@@ -31,7 +39,62 @@ public class EspeciariaDAO
 				ps.setInt(1, especiaria.getOID());
 				ps.setString(2, especiaria.getNome());
 				
-				ps.executeUpdate();
+				return ps.executeUpdate() > 0; 
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+	
+	public static boolean atualizar(EspeciariaBean especiaria) throws SQLException
+	{
+		String sql = "update ESPECIARIA set nome = ? where id = ?";
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();		
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{				
+				ps.setString(1, especiaria.getNome());				
+				ps.setInt(2, especiaria.getOID());
+				
+				return ps.executeUpdate() > 0;
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+	
+	public static boolean excluir(int id) throws SQLException
+	{
+		String sql = "delete from ESPECIARIA where id = ?";
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ps.setInt(1, id);
+				
+				return ps.executeUpdate() > 0;
 			}
 			finally
 			{
@@ -107,7 +170,7 @@ public class EspeciariaDAO
 		return null;
 	}
 	
-	public static EspeciariaBean localizar(int id) throws SQLException
+	public static EspeciariaBean localizar(int oid) throws SQLException
 	{
 		String sql = "select * from ESPECIARIA where id = ?";
 		
@@ -119,7 +182,7 @@ public class EspeciariaDAO
 			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
 			try
 			{
-				ps.setInt(1, id);
+				ps.setInt(1, oid);
 				
 				ResultSet rs = ps.executeQuery();
 				if (rs.next())
@@ -182,4 +245,5 @@ public class EspeciariaDAO
 		
 		return especiarias;
 	}
+
 }

@@ -11,6 +11,7 @@ public class IngredienteBean
 	
 	public IngredienteBean()
 	{
+		this.oid = 0;
 		this.receita = 0;
 		this.especiaria = 0;
 		this.unidade = "";

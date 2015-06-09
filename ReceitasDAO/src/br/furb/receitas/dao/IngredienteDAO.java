@@ -14,7 +14,15 @@ public class IngredienteDAO
 {
 	private static final String TABELA_ID = "INGREDIENTE_ID";
 	
-	public static void incluir(IngredienteBean ingrediente) throws SQLException
+	public static boolean salvar(IngredienteBean ingrediente) throws SQLException
+	{
+		if (ingrediente.getOID() == 0)
+			return incluir(ingrediente);
+		else
+			return atualizar(ingrediente);
+	}
+	
+	public static boolean incluir(IngredienteBean ingrediente) throws SQLException
 	{
 		String sql = "insert into INGREDIENTE (id, id_receita, id_especiaria, unidade, quantidade) values (?, ?, ?, ?, ?)";
 		
@@ -34,7 +42,66 @@ public class IngredienteDAO
 				ps.setString(4, ingrediente.getUnidade());
 				ps.setDouble(5, ingrediente.getQuantidade());
 				
-				ps.executeUpdate();
+				return ps.executeUpdate() > 0;
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+	
+	public static boolean atualizar(IngredienteBean ingrediente) throws SQLException
+	{
+		String sql = "update INGREDIENTE set id_receita = ?, id_especiaria = ?, unidade = ?, quantidade = ? where id = ?";
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();		
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{				
+				ps.setInt(1, ingrediente.getReceita());
+				ps.setInt(2, ingrediente.getEspeciaria());
+				ps.setString(3, ingrediente.getUnidade());
+				ps.setDouble(4, ingrediente.getQuantidade());
+				
+				ps.setInt(5, ingrediente.getOID());
+				
+				return ps.executeUpdate() > 0;
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+	
+	public static boolean excluir(int id) throws SQLException
+	{
+		String sql = "delete from INGREDIENTE where id = ?";
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ps.setInt(1, id);
+				
+				return ps.executeUpdate() > 0;
 			}
 			finally
 			{
@@ -70,6 +137,47 @@ public class IngredienteDAO
 		{
 			conSQL.fecharConexao();
 		}
+	}
+	
+	public static IngredienteBean localizar(int oid) throws SQLException
+	{
+		String sql = "select * from INGREDIENTE where id = ?";
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ps.setInt(1, oid);
+				
+				ResultSet rs = ps.executeQuery();
+				if (rs.next())
+				{
+					IngredienteBean ingrediente = new IngredienteBean();
+					
+					ingrediente.setOID(rs.getInt("id"));
+					ingrediente.setReceita(rs.getInt("id_receita"));
+					ingrediente.setEspeciaria(rs.getInt("id_especiaria"));
+					ingrediente.setUnidade(rs.getString("unidade"));
+					ingrediente.setQuantidade(rs.getDouble("quantidade"));
+					
+					return ingrediente;
+				}
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+		
+		return null;
 	}
 	
 	public static List<IngredienteBean> listarDaReceita(int receita) throws SQLException

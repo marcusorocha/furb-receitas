@@ -35,7 +35,15 @@ public class ReceitaDAO
 		return receitas;
 	}
 	
- 	public static void incluir(ReceitaBean receita) throws SQLException
+	public static boolean salvar(ReceitaBean receita) throws SQLException
+	{
+		if (receita.getOID() == 0)
+			return incluir(receita);
+		else
+			return atualizar(receita);
+	}
+	
+ 	public static boolean incluir(ReceitaBean receita) throws SQLException
 	{
 		String sql = "insert into RECEITA (id, descricao, id_usuario) values (?, ?, ?)";
 		
@@ -53,7 +61,63 @@ public class ReceitaDAO
 				ps.setString(2, receita.getDescricao());
 				ps.setInt(3, receita.getUsuario());
 				
-				ps.executeUpdate();
+				return ps.executeUpdate() > 0;
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+ 	
+ 	public static boolean atualizar(ReceitaBean receita) throws SQLException
+	{
+		String sql = "update RECEITA set descricao = ?, id_usuario = ? where id = ?";
+		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();		
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{								
+				ps.setString(1, receita.getDescricao());
+				ps.setInt(2, receita.getUsuario());
+				ps.setInt(3, receita.getOID());
+				
+				return ps.executeUpdate() > 0;
+			}
+			finally
+			{
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+ 	
+ 	public static boolean excluir(int oid) throws SQLException
+	{
+ 		String sql = "delete from RECEITA where id = ?";
+ 		
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{
+				ps.setInt(1, oid);
+				
+				return ps.executeUpdate() > 0;
 			}
 			finally
 			{
@@ -83,33 +147,6 @@ public class ReceitaDAO
 			finally
 			{
 				st.close();
-			}
-		}
-		finally
-		{
-			conSQL.fecharConexao();
-		}
-	} 
-	
-	public static boolean excluir(int oid) throws SQLException
-	{
-		String sql = "delete from RECEITA where id = ?";		
-		
-		ConexaoSQL conSQL = new ConexaoSQL();
-		try
-		{
-			conSQL.abrirConexao();
-			
-			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
-			try
-			{
-				ps.setInt(1, oid);
-				
-				return ps.executeUpdate() > 0;
-			}
-			finally
-			{
-				ps.close();
 			}
 		}
 		finally
