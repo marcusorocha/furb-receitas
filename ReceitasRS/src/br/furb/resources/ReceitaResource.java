@@ -88,8 +88,6 @@ public class ReceitaResource
 	 * <br><br>
 	 * caminho: <b>/rs/receitas/incluir</b>
 	 * 
-	 * @param usuario <code>FormParam</code> contendo o nome do usuário
-	 * 
 	 * @param descricao <code>FormParam</code> contento a descrição da receita
 	 * 
 	 * @param id <code>FormParam</code> contendo o id da receita, se esse parametro 
@@ -138,9 +136,7 @@ public class ReceitaResource
 	 * <br><br>
 	 * caminho: <b>/rs/receita/remover</b>
 	 * 
-	 * @param usuario <code>FormParam</code> contendo o nome do usuário
-	 * 
-	 * @param receita <code>FormParam</code> contento o identificado da receita
+	 * @param id <code>FormParam</code> contento o identificado da receita
 	 * 
 	 * @return Um objeto JSON com as informações da receita caso o usuário exista 
 	 * e a exclusão dos dados seja bem sucedida, caso contrário, será retornado um
@@ -250,9 +246,9 @@ public class ReceitaResource
 	 * <br><br>
 	 * caminho: <b>/rs/receita/descricao</b>
 	 * 
-	 * @param especiarias <code>FormParam</code> contendo a lista de especiarias separadas por vírgula.
+	 * @param descricao <code>FormParam</code> contendo a descrição ou parte dela.
 	 * 
-	 * @return Um objeto JSON com a lista de receitas contendo alguma das especiarias caso exista,
+	 * @return Um objeto JSON com a lista de receitas contendo a descrição ou parte dela caso exista,
 	 * caso contrário, será retornado um objeto JSON de lista vazia.
 	 */
 	@POST

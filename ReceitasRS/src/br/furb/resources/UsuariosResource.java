@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
@@ -132,15 +131,15 @@ public class UsuariosResource
 		}
 	}
 	
-	@GET
-	@Path("session")
-	@Produces(MediaType.TEXT_PLAIN)
-	@PermitAll
-	public String getSessionId( @Context HttpServletRequest request )
-	{
-		return request.getSession(true).getId();
-	}
-	
+	/**
+	 * Nome do usuário logado
+	 * <br><br>
+	 * caminho: <b>/rs/usuarios/logado</b>
+	 * 
+	 * @return Um objeto <code>Response</code> com o código de retorno http e com o 
+	 * o objeto texto com os nome do usuário autorizado (logado).
+	 *  		
+	 */
 	@GET
 	@Path("logado")
 	@Produces(MediaType.TEXT_PLAIN)
