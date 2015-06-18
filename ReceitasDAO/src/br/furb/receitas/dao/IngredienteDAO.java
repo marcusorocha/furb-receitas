@@ -38,7 +38,7 @@ public class IngredienteDAO
 			{
 				ps.setInt(1, ingrediente.getOID());
 				ps.setInt(2, ingrediente.getReceita());
-				ps.setInt(3, ingrediente.getEspeciaria());
+				ps.setInt(3, ingrediente.getOIDEspeciaria());
 				ps.setString(4, ingrediente.getUnidade());
 				ps.setDouble(5, ingrediente.getQuantidade());
 				
@@ -68,7 +68,7 @@ public class IngredienteDAO
 			try
 			{				
 				ps.setInt(1, ingrediente.getReceita());
-				ps.setInt(2, ingrediente.getEspeciaria());
+				ps.setInt(2, ingrediente.getOIDEspeciaria());
 				ps.setString(3, ingrediente.getUnidade());
 				ps.setDouble(4, ingrediente.getQuantidade());
 				
@@ -160,7 +160,7 @@ public class IngredienteDAO
 					
 					ingrediente.setOID(rs.getInt("id"));
 					ingrediente.setReceita(rs.getInt("id_receita"));
-					ingrediente.setEspeciaria(rs.getInt("id_especiaria"));
+					ingrediente.setOIDEspeciaria(rs.getInt("id_especiaria"));
 					ingrediente.setUnidade(rs.getString("unidade"));
 					ingrediente.setQuantidade(rs.getDouble("quantidade"));
 					
@@ -204,7 +204,7 @@ public class IngredienteDAO
 					
 					ingrediente.setOID(rs.getInt("id"));
 					ingrediente.setReceita(rs.getInt("id_receita"));
-					ingrediente.setEspeciaria(rs.getInt("id_especiaria"));
+					ingrediente.setOIDEspeciaria(rs.getInt("id_especiaria"));
 					ingrediente.setUnidade(rs.getString("unidade"));
 					ingrediente.setQuantidade(rs.getDouble("quantidade"));
 					

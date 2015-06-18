@@ -3,15 +3,20 @@ package br.furb.resources;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import br.furb.receitas.bean.ReceitaBean;
 import br.furb.receitas.bean.UsuarioBean;
@@ -21,7 +26,10 @@ import br.furb.utils.StringUtils;
 
 @Path("receita")
 public class ReceitaResource
-{
+{	
+	@Context
+	SecurityContext sc;
+	
 	/**
 	 * Listar todas as receitas cadastradas
 	 * <br><br>
@@ -32,6 +40,7 @@ public class ReceitaResource
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obterTodas()
 	{		
 		try
@@ -57,6 +66,7 @@ public class ReceitaResource
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obter(@PathParam("id") String id)
 	{
 		try
@@ -93,21 +103,20 @@ public class ReceitaResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public Response salvar(@FormParam("usuario") String usuario, 
-						   @FormParam("descricao") String descricao,
-						   @FormParam("id") String id)
+	@RolesAllowed("Autorizado")
+	public Response salvar(@FormParam("descricao") String descricao, @FormParam("id") String id)
 	{		
 		try
 		{
-			if (!StringUtils.IsNullOrEmpty(usuario) && !StringUtils.IsNullOrEmpty(descricao))
-			{
-				UsuarioBean u = UsuarioDAO.localizar(usuario);
-				
-				if (u != null)
-				{			
+			UsuarioBean usuario = UsuarioDAO.localizar(sc.getUserPrincipal().getName());
+			
+			if (usuario != null)
+			{			
+				if (!StringUtils.IsNullOrEmpty(descricao))
+				{				
 					ReceitaBean receita = new ReceitaBean();
 					receita.setDescricao(descricao);
-					receita.setUsuario(u.getOID());
+					receita.setUsuario(usuario.getOID());
 					
 					if (!StringUtils.IsNullOrEmpty(id))
 						receita.setOID(Integer.parseInt(id));
@@ -137,26 +146,28 @@ public class ReceitaResource
 	 * e a exclusão dos dados seja bem sucedida, caso contrário, será retornado um
 	 * objeto vazio.  
 	 */
-	@POST
-	@Path("remover")
+	@DELETE
+	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response removerReceita(@FormParam("usuario") String usuario, @FormParam("receita") String receita)
+	@RolesAllowed("Autorizado")
+	public Response removerReceita(@PathParam("id") String id)
 	{		
 		try
 		{
-			if (!StringUtils.IsNullOrEmpty(usuario) && !StringUtils.IsNullOrEmpty(receita))
+			UsuarioBean usuario = UsuarioDAO.localizar(sc.getUserPrincipal().getName());
+			
+			if (usuario != null)
 			{
-				UsuarioBean u = UsuarioDAO.localizar(usuario);
-				
-				if (u != null)
-				{
-					Integer oidReceita = Integer.parseInt(receita);
+				if (!StringUtils.IsNullOrEmpty(id))
+				{					
+					Integer oidReceita = Integer.parseInt(id);
 					
 					ReceitaBean r = ReceitaDAO.localizar(oidReceita);
 					
 					if (r != null)
-						if (ReceitaDAO.excluir(oidReceita))
-							return Response.ok(r).build();
+						if (r.getUsuario() == usuario.getOID())
+							if (ReceitaDAO.excluir(oidReceita))
+								return Response.ok(r).build();
 				}
 			}
 			return Response.noContent().build();
@@ -181,8 +192,9 @@ public class ReceitaResource
 	@GET
 	@Path("usuario/{usuario}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response listarReceitas(@PathParam("usuario") String nomeUsuario)
-	{		
+	{
 		try
 		{
 			UsuarioBean usuario = UsuarioDAO.localizar(nomeUsuario);
@@ -204,7 +216,7 @@ public class ReceitaResource
 	/**
 	 * Lista de receitas contendo alguma das especiarias
 	 * <br><br>
-	 * caminho: <b>/rs/receitas/contendo/{lista_especiarias}</b>
+	 * caminho: <b>/rs/receita/contendo</b>
 	 * 
 	 * @param especiarias <code>FormParam</code> contendo a lista de especiarias separadas por vírgula.
 	 * 
@@ -212,8 +224,9 @@ public class ReceitaResource
 	 * caso contrário, será retornado um objeto JSON de lista vazia.
 	 */
 	@POST
-	@Path("contendo/{especiarias}")
+	@Path("contendo")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response listarReceitasContendo(@FormParam("especiarias") String especiarias)
 	{		
 		try
@@ -221,6 +234,38 @@ public class ReceitaResource
 			if (especiarias != null && !especiarias.isEmpty())
 			{
 				List<ReceitaBean> receitas = ReceitaDAO.listarComEspeciarias(especiarias.split(","));
+			
+				return Response.ok(receitas).build();
+			}
+			return Response.noContent().build();
+		}
+		catch (SQLException sqlEx)
+		{
+			return Response.serverError().entity("Ocorreu um erro durante a consulta. Tente novamente mais tarde").build();
+		}
+	}
+	
+	/**
+	 * Lista de receitas com a descrição passada por parâmetro
+	 * <br><br>
+	 * caminho: <b>/rs/receita/descricao</b>
+	 * 
+	 * @param especiarias <code>FormParam</code> contendo a lista de especiarias separadas por vírgula.
+	 * 
+	 * @return Um objeto JSON com a lista de receitas contendo alguma das especiarias caso exista,
+	 * caso contrário, será retornado um objeto JSON de lista vazia.
+	 */
+	@POST
+	@Path("descricao")
+	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
+	public Response listarReceitasPorDescricao(@FormParam("descricao") String descricao)
+	{		
+		try
+		{
+			if (descricao != null && !descricao.isEmpty())
+			{
+				List<ReceitaBean> receitas = ReceitaDAO.listarComDescricao(descricao);
 			
 				return Response.ok(receitas).build();
 			}

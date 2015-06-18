@@ -244,13 +244,13 @@ public class ReceitaDAO
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
 		{
-			String pin = conSQL.gerarParametros(especiarias.length);
+			String condicoes = conSQL.gerarCondicoes(especiarias.length, "C.NOME", "LIKE", "OR");
 			
 			String sql = " SELECT * FROM RECEITA A WHERE A.ID IN "
 					   + " ( "
 					   + "   SELECT B.ID_RECEITA FROM INGREDIENTE B "
 					   + "   INNER JOIN ESPECIARIA C ON C.ID = B.ID_ESPECIARIA "
-					   + "   WHERE C.NOME IN ( " + pin  + " ) "
+					   + "   WHERE " + condicoes
 					   + " ) ";
 						
 			conSQL.abrirConexao();
@@ -260,6 +260,33 @@ public class ReceitaDAO
 			{				
 				for (int i = 0; i < especiarias.length; i++)
 					ps.setString(i + 1, especiarias[i].trim());
+				
+				return popularReceitas(ps.executeQuery());
+			}
+			finally
+			{	
+				ps.close();
+			}
+		}
+		finally
+		{
+			conSQL.fecharConexao();
+		}
+	}
+	
+	public static List<ReceitaBean> listarComDescricao(String descricao) throws SQLException
+	{	
+		ConexaoSQL conSQL = new ConexaoSQL();
+		try
+		{			
+			String sql = " SELECT * FROM RECEITA WHERE DESCRICAO LIKE ?";
+						
+			conSQL.abrirConexao();
+			
+			PreparedStatement ps = conSQL.getConexao().prepareStatement(sql);
+			try
+			{				
+				ps.setString(1, "%"+ descricao +"%");
 				
 				return popularReceitas(ps.executeQuery());
 			}

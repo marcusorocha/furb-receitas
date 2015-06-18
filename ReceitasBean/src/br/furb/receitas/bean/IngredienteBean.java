@@ -4,8 +4,8 @@ public class IngredienteBean
 {
 	private int oid;	
 	private int receita;
-	private int especiaria;
-	
+	private int oidEspeciaria;
+	private String especiaria;
 	private String unidade;
 	private double quantidade;
 	
@@ -13,7 +13,8 @@ public class IngredienteBean
 	{
 		this.oid = 0;
 		this.receita = 0;
-		this.especiaria = 0;
+		this.oidEspeciaria = 0;
+		this.setEspeciaria("");
 		this.unidade = "";
 		this.quantidade = 0.0;
 	}
@@ -31,7 +32,8 @@ public class IngredienteBean
 	public IngredienteBean(ReceitaBean receita, EspeciariaBean especiaria, double quantidade,  String unidade)
 	{		
 		this.receita = receita.getOID();
-		this.especiaria = especiaria.getOID();
+		this.oidEspeciaria = especiaria.getOID();
+		this.setEspeciaria(especiaria.getNome());
 		this.unidade = unidade;
 		this.quantidade = quantidade;
 	}
@@ -56,16 +58,26 @@ public class IngredienteBean
 		this.receita = receita;
 	}
 	
-	public int getEspeciaria()
+	public int getOIDEspeciaria()
+	{
+		return oidEspeciaria;
+	}
+	
+	public void setOIDEspeciaria(int oidEspeciaria)
+	{
+		this.oidEspeciaria = oidEspeciaria;
+	}
+	
+	public String getEspeciaria()
 	{
 		return especiaria;
 	}
-	
-	public void setEspeciaria(int especiaria)
+
+	public void setEspeciaria(String especiaria)
 	{
 		this.especiaria = especiaria;
 	}
-	
+
 	public String getUnidade()
 	{
 		return unidade;

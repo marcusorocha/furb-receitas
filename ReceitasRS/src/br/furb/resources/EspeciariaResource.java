@@ -3,6 +3,8 @@ package br.furb.resources;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -30,6 +32,7 @@ public class EspeciariaResource
 	 */
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obterTodas()
 	{		
 		try
@@ -55,6 +58,7 @@ public class EspeciariaResource
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obter(@PathParam("id") String id)
 	{
 		try
@@ -85,6 +89,7 @@ public class EspeciariaResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@RolesAllowed("Autorizado")
 	public Response salvar(EspeciariaBean especiaria)
 	{		
 		try
@@ -118,6 +123,7 @@ public class EspeciariaResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@RolesAllowed("Autorizado")
 	public Response salvarFORM(@FormParam("nome") String nome, @FormParam("id") String id)
 	{
 		if (nome != null && !nome.isEmpty())
@@ -144,6 +150,7 @@ public class EspeciariaResource
 	@DELETE
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("Autorizado")
 	public Response remover(@PathParam("id") String id)
 	{
 		try

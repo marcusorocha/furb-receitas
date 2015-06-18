@@ -2,21 +2,35 @@ package br.furb.resources;
 
 import java.sql.SQLException;
 
+import javax.annotation.security.DenyAll;
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
+
+import org.codehaus.jettison.json.JSONException;
+import org.codehaus.jettison.json.JSONObject;
 
 import br.furb.receitas.bean.UsuarioBean;
 import br.furb.receitas.dao.UsuarioDAO;
-import br.furb.utils.LogUtil;
+import br.furb.utils.UserController;
+import br.furb.utils.UserInfo;
 
 @Path("usuarios")
 public class UsuariosResource
-{	
+{		
+	@Context
+	SecurityContext sc; 
+	
 	@OPTIONS
 	@Path("login")
 	public Response login() 
@@ -40,26 +54,33 @@ public class UsuariosResource
 	@POST
 	@Path("login")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response login(@FormParam("nome") String nome, @FormParam("senha") String senha)
-	{
+	{		
 		try
-		{
-			LogUtil.logar("Parâmetro nome: " + nome);
-			LogUtil.logar("Parâmetro senha: " + senha);
-			
+		{			
 			if (nome != null)
 			{
 				UsuarioBean usuario = UsuarioDAO.localizar(nome);
 				
-				LogUtil.logar("Usuário: " + usuario.toString());
-				
 				if (usuario != null)
 					if (usuario.getSenha().equals(senha))
-						return Response.ok(usuario).build();
+					{
+						UserController uc = UserController.getInstance();
+						
+						UserInfo ui = uc.getUsuarioLogado(usuario);
+						if (ui == null)
+							ui = uc.addUsuario(usuario);
+						
+						JSONObject jo = new JSONObject();
+						jo.put("token", ui.getToken());
+						
+						return Response.ok(jo).build();
+					}
 			}
 			return Response.noContent().build();
 		}
-		catch (SQLException sqlEx)
+		catch (SQLException | JSONException ex)
 		{			
 			return Response.serverError().build();
 		}
@@ -84,11 +105,12 @@ public class UsuariosResource
 	@POST
 	@Path("incluir")
 	@Produces(MediaType.APPLICATION_JSON)
+	@DenyAll
 	public Response incluir(@FormParam("nome") String nome, @FormParam("senha") String senha, @FormParam("email") String email)
 	{
 		try
 		{
-			if (nome != null && !nome.isEmpty()) 
+			if (nome != null && !nome.isEmpty())
 			{
 				UsuarioBean usuario = UsuarioDAO.localizar(nome);
 				
@@ -108,5 +130,23 @@ public class UsuariosResource
 		{			
 			return Response.serverError().build();
 		}
+	}
+	
+	@GET
+	@Path("session")
+	@Produces(MediaType.TEXT_PLAIN)
+	@PermitAll
+	public String getSessionId( @Context HttpServletRequest request )
+	{
+		return request.getSession(true).getId();
+	}
+	
+	@GET
+	@Path("logado")
+	@Produces(MediaType.TEXT_PLAIN)
+	@RolesAllowed("Autorizado")
+	public Response getUsuarioLogado()
+	{
+		return Response.ok(sc.getUserPrincipal().getName()).build();
 	}
 }

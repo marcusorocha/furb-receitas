@@ -65,4 +65,18 @@ public class UsuarioBean
 	{
 		return String.format("OID: %s, Nome: %s, Senha: %s, E-mail: %s", oid, nome, senha, email);
 	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (obj == null)
+			return false;
+		
+		if (!(obj instanceof UsuarioBean))
+			return false;
+		
+		UsuarioBean aux = (UsuarioBean)obj;		
+		
+		return this.getNome().equals(aux.getNome());
+	}
 }

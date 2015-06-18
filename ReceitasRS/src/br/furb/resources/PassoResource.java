@@ -3,6 +3,8 @@ package br.furb.resources;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -11,16 +13,26 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
 import br.furb.receitas.bean.PassoBean;
+import br.furb.receitas.bean.ReceitaBean;
+import br.furb.receitas.bean.UsuarioBean;
 import br.furb.receitas.dao.PassoDAO;
+import br.furb.receitas.dao.ReceitaDAO;
+import br.furb.receitas.dao.UsuarioDAO;
 import br.furb.utils.StringUtils;
 
 @Path("passo")
 public class PassoResource
 {
+	
+	@Context
+	SecurityContext sc; 
+	
 	/**
 	 * Retorna um passo pelo seu identificador
 	 * <br><br>
@@ -32,6 +44,7 @@ public class PassoResource
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obter(@PathParam("id") String id)
 	{
 		try
@@ -62,12 +75,26 @@ public class PassoResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@RolesAllowed("Autorizado")
 	public Response salvar(PassoBean passo)
 	{		
 		try
 		{
-			if (PassoDAO.salvar(passo))
-				return Response.ok(passo).build();
+			UsuarioBean usuario = UsuarioDAO.localizar(sc.getUserPrincipal().getName());
+			
+			if (usuario != null)
+			{
+				ReceitaBean r = ReceitaDAO.localizar(passo.getReceita());
+				
+				if (r != null)
+				{
+					if (r.getUsuario() == usuario.getOID())
+					{	
+						if (PassoDAO.salvar(passo))
+							return Response.ok(passo).build();
+					}
+				}
+			}
 			
 			return Response.noContent().build();
 		}
@@ -99,6 +126,7 @@ public class PassoResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@RolesAllowed("Autorizado")
 	public Response salvarFORM(@FormParam("receita") String receita, 
 							   @FormParam("sequencia") String sequencia,
 							   @FormParam("descricao") String descricao,
@@ -140,6 +168,7 @@ public class PassoResource
 	@DELETE
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("Autorizado")
 	public Response remover(@PathParam("id") String id)
 	{
 		try
@@ -149,8 +178,23 @@ public class PassoResource
 			PassoBean passo = PassoDAO.localizar(oid);
 			
 			if (passo != null)
-				if (PassoDAO.excluir(oid))
-					return Response.ok(passo).build();
+			{
+				UsuarioBean usuario = UsuarioDAO.localizar(sc.getUserPrincipal().getName());
+				
+				if (usuario != null)
+				{
+					ReceitaBean r = ReceitaDAO.localizar(passo.getReceita());
+					
+					if (r != null)
+					{
+						if (r.getUsuario() == usuario.getOID())
+						{	
+							if (PassoDAO.excluir(oid))
+								return Response.ok(passo).build();
+						}
+					}
+				}
+			}
 			
 			return Response.noContent().build();
 		}
@@ -175,6 +219,7 @@ public class PassoResource
 	@GET
 	@Path("receita/{receita}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obterDaReceita(@PathParam("receita") String receita)
 	{		
 		try

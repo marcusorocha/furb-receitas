@@ -19,5 +19,6 @@
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/wstx-asl-3.2.7.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ReceitasBean"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ReceitasDAO"/>
+	<classpathentry kind="con" path="org.eclipse.jst.server.core.container/org.eclipse.jst.server.tomcat.runtimeTarget/Tomcat v7.0 at localhost"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

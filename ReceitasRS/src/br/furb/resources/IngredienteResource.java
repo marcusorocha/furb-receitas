@@ -3,6 +3,8 @@ package br.furb.resources;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
@@ -11,16 +13,27 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.SecurityContext;
 
+import br.furb.receitas.bean.EspeciariaBean;
 import br.furb.receitas.bean.IngredienteBean;
+import br.furb.receitas.bean.ReceitaBean;
+import br.furb.receitas.bean.UsuarioBean;
+import br.furb.receitas.dao.EspeciariaDAO;
 import br.furb.receitas.dao.IngredienteDAO;
+import br.furb.receitas.dao.ReceitaDAO;
+import br.furb.receitas.dao.UsuarioDAO;
 import br.furb.utils.StringUtils;
 
 @Path("ingrediente")
 public class IngredienteResource
 {	
+	@Context
+	SecurityContext sc;
+	
 	/**
 	 * Retorna um ingrediente pelo seu identificador
 	 * <br><br>
@@ -32,6 +45,7 @@ public class IngredienteResource
 	@GET
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obter(@PathParam("id") String id)
 	{
 		try
@@ -62,13 +76,37 @@ public class IngredienteResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
+	@RolesAllowed("Autorizado")
 	public Response salvar(IngredienteBean ingrediente)
 	{		
 		try
-		{
-			if (IngredienteDAO.salvar(ingrediente))
-				return Response.ok(ingrediente).build();
+		{	
+			UsuarioBean usuario = UsuarioDAO.localizar(sc.getUserPrincipal().getName());
 			
+			if (usuario != null)
+			{
+				ReceitaBean r = ReceitaDAO.localizar(ingrediente.getReceita());
+				
+				if (r != null)
+				{
+					if (r.getUsuario() == usuario.getOID())
+					{
+						if (ingrediente.getOIDEspeciaria() == 0)
+						{
+							EspeciariaBean e = EspeciariaDAO.localizar(ingrediente.getEspeciaria());
+							
+							if (e == null)
+								if (!EspeciariaDAO.salvar(new EspeciariaBean(ingrediente.getEspeciaria())))
+									return Response.noContent().build();
+							
+							ingrediente.setOIDEspeciaria(e.getOID());				
+						}
+						
+						if (IngredienteDAO.salvar(ingrediente))
+							return Response.ok(ingrediente).build();
+					}
+				}
+			}
 			return Response.noContent().build();
 		}
 		catch (SQLException ex)
@@ -101,6 +139,7 @@ public class IngredienteResource
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	@RolesAllowed("Autorizado")
 	public Response salvarFORM(@FormParam("receita") String receita, 
 							   @FormParam("especiaria") String especiaria, 							
 							   @FormParam("quantidade") String quantidade, 
@@ -109,17 +148,16 @@ public class IngredienteResource
 	{
 		if (!StringUtils.IsNullOrEmpty(receita) && !StringUtils.IsNullOrEmpty(especiaria))
 		{
-			int oid_receita = Integer.parseInt(receita);
-			int oid_especiaria = Integer.parseInt(especiaria);
+			int oid_receita = Integer.parseInt(receita);			
 			double qtde = Double.parseDouble(quantidade);
-			
-			if (oid_receita > 0 && oid_especiaria > 0 && qtde > 0.0)
+					
+			if (oid_receita > 0 && qtde > 0.0)
 			{			
 				IngredienteBean ingrediente = new IngredienteBean();
 				
 				ingrediente.setReceita(oid_receita);
-				ingrediente.setEspeciaria(oid_especiaria);				
-				ingrediente.setQuantidade(qtde);			
+				ingrediente.setEspeciaria(especiaria);				
+				ingrediente.setQuantidade(qtde);
 				
 				if (!StringUtils.IsNullOrEmpty(unidade))
 					ingrediente.setUnidade(unidade);
@@ -145,6 +183,7 @@ public class IngredienteResource
 	@DELETE
 	@Path("{id}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed("Autorizado")
 	public Response remover(@PathParam("id") String id)
 	{
 		try
@@ -154,8 +193,23 @@ public class IngredienteResource
 			IngredienteBean ingrediente = IngredienteDAO.localizar(oid);
 			
 			if (ingrediente != null)
-				if (IngredienteDAO.excluir(oid))
-					return Response.ok(ingrediente).build();
+			{
+				UsuarioBean usuario = UsuarioDAO.localizar(sc.getUserPrincipal().getName());
+				
+				if (usuario != null)
+				{
+					ReceitaBean r = ReceitaDAO.localizar(ingrediente.getReceita());
+					
+					if (r != null)
+					{
+						if (r.getUsuario() == usuario.getOID())
+						{								
+							if (IngredienteDAO.excluir(oid))
+								return Response.ok(ingrediente).build();
+						}
+					}
+				}
+			}
 			
 			return Response.noContent().build();
 		}
@@ -180,6 +234,7 @@ public class IngredienteResource
 	@GET
 	@Path("receita/{receita}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@PermitAll
 	public Response obterDaReceita(@PathParam("receita") String receita)
 	{		
 		try

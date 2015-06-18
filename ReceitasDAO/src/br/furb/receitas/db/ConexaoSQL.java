@@ -85,5 +85,16 @@ public class ConexaoSQL
 		}
 		return sb.toString();
 	}
+	
+	public String gerarCondicoes(int quantidade, String campo, String operador, String juncao)
+	{
+		StringBuilder sb = new StringBuilder();
+		while (sb.length() < quantidade) 
+		{ 
+		    if (sb.length() > 0) sb.append(" " + juncao + " ");
+		    sb.append(campo + " " + operador + " ? ");
+		}
+		return sb.toString();
+	}
 
 }
