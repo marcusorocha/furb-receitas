@@ -259,7 +259,7 @@ public class ReceitaDAO
 			try
 			{				
 				for (int i = 0; i < especiarias.length; i++)
-					ps.setString(i + 1, especiarias[i].trim());
+					ps.setString(i + 1, "%" + especiarias[i].trim() + "%");
 				
 				return popularReceitas(ps.executeQuery());
 			}
