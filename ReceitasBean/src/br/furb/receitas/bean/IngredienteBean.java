@@ -1,11 +1,15 @@
 package br.furb.receitas.bean;
 
-public class IngredienteBean
+import java.io.Serializable;
+
+public class IngredienteBean implements Serializable
 {
+	private static final long serialVersionUID = 6054651650818599552L;
+	
 	private int oid;	
 	private int receita;
-	private int oidEspeciaria;
-	private String especiaria;
+	private String nome;
+	private int especiaria;
 	private String unidade;
 	private double quantidade;
 	
@@ -13,15 +17,28 @@ public class IngredienteBean
 	{
 		this.oid = 0;
 		this.receita = 0;
-		this.oidEspeciaria = 0;
-		this.setEspeciaria("");
+		this.nome = "";
+		this.especiaria = 0;
 		this.unidade = "";
 		this.quantidade = 0.0;
 	}
 	
-	public IngredienteBean(ReceitaBean receita, EspeciariaBean especiaria)
+	public IngredienteBean(ReceitaBean receita, String nome)
 	{
-		this(receita, especiaria, 0);
+		this(receita, nome, 0);
+	}
+	
+	public IngredienteBean(ReceitaBean receita, String nome, double quantidade)
+	{		
+		this(receita, nome, quantidade, "");
+	}
+	
+	public IngredienteBean(ReceitaBean receita, String nome, double quantidade, String unidade)
+	{		
+		this.receita = receita.getOID();
+		this.nome = nome;
+		this.unidade = unidade;
+		this.quantidade = quantidade;
 	}
 	
 	public IngredienteBean(ReceitaBean receita, EspeciariaBean especiaria, double quantidade)
@@ -31,11 +48,9 @@ public class IngredienteBean
 	
 	public IngredienteBean(ReceitaBean receita, EspeciariaBean especiaria, double quantidade,  String unidade)
 	{		
-		this.receita = receita.getOID();
-		this.oidEspeciaria = especiaria.getOID();
-		this.setEspeciaria(especiaria.getNome());
-		this.unidade = unidade;
-		this.quantidade = quantidade;
+		this(receita, especiaria.getNome(), quantidade, unidade);		
+		
+		this.especiaria = especiaria.getOID();
 	}
 	
 	public int getOID()
@@ -58,22 +73,21 @@ public class IngredienteBean
 		this.receita = receita;
 	}
 	
-	public int getOIDEspeciaria()
+	public String getNome() {
+		return nome;
+	}
+
+	public void setNome(String nome) 
 	{
-		return oidEspeciaria;
+		this.nome = nome;
 	}
 	
-	public void setOIDEspeciaria(int oidEspeciaria)
-	{
-		this.oidEspeciaria = oidEspeciaria;
-	}
-	
-	public String getEspeciaria()
+	public int getEspeciaria()
 	{
 		return especiaria;
 	}
 
-	public void setEspeciaria(String especiaria)
+	public void setEspeciaria(int especiaria)
 	{
 		this.especiaria = especiaria;
 	}
@@ -97,4 +111,11 @@ public class IngredienteBean
 	{
 		this.quantidade = quantidade;
 	}
+	
+	@Override
+	public String toString() 
+	{
+		return getNome();
+	}
+
 }

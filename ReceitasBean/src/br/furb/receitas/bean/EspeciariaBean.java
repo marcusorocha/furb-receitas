@@ -1,7 +1,13 @@
 package br.furb.receitas.bean;
 
-public class EspeciariaBean
+import java.io.Serializable;
+
+public class EspeciariaBean implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int oid;
 	private String nome;
 	

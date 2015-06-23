@@ -1,7 +1,11 @@
 package br.furb.receitas.bean;
 
-public class ReceitaBean 
+import java.io.Serializable;
+
+public class ReceitaBean implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private int oid;
 	private String descricao;
 	private int usuario;
@@ -36,5 +40,11 @@ public class ReceitaBean
 	public void setUsuario(int usuario)
 	{
 		this.usuario = usuario;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return getDescricao();
 	}
 }

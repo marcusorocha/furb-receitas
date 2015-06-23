@@ -1,7 +1,11 @@
 package br.furb.receitas.bean;
 
-public class PassoBean
+import java.io.Serializable;
+
+public class PassoBean implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private int oid;
 	private int receita;
 	private int sequencia;
@@ -59,6 +63,12 @@ public class PassoBean
 	public void setDescricao(String descricao)
 	{
 		this.descricao = descricao;
+	}
+	
+	@Override
+	public String toString() 
+	{
+		return getDescricao();
 	}
 
 }

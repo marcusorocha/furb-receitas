@@ -86,7 +86,7 @@ public class ReceitaResource
 	/**
 	 * Incluir uma receita para um usuário
 	 * <br><br>
-	 * caminho: <b>/rs/receitas/incluir</b>
+	 * caminho: <b>/rs/receita</b>
 	 * 
 	 * @param descricao <code>FormParam</code> contento a descrição da receita
 	 * 

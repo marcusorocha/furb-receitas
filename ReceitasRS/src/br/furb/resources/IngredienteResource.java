@@ -91,15 +91,15 @@ public class IngredienteResource
 				{
 					if (r.getUsuario() == usuario.getOID())
 					{
-						if (ingrediente.getOIDEspeciaria() == 0)
+						if (ingrediente.getEspeciaria() == 0)
 						{
 							EspeciariaBean e = EspeciariaDAO.localizar(ingrediente.getEspeciaria());
 							
 							if (e == null)
-								if (!EspeciariaDAO.salvar(new EspeciariaBean(ingrediente.getEspeciaria())))
+								if (!EspeciariaDAO.salvar(new EspeciariaBean(ingrediente.getNome())))
 									return Response.noContent().build();
 							
-							ingrediente.setOIDEspeciaria(e.getOID());				
+							ingrediente.setEspeciaria(e.getOID());				
 						}
 						
 						if (IngredienteDAO.salvar(ingrediente))
@@ -156,7 +156,7 @@ public class IngredienteResource
 				IngredienteBean ingrediente = new IngredienteBean();
 				
 				ingrediente.setReceita(oid_receita);
-				ingrediente.setEspeciaria(especiaria);				
+				ingrediente.setNome(especiaria);				
 				ingrediente.setQuantidade(qtde);
 				
 				if (!StringUtils.IsNullOrEmpty(unidade))
