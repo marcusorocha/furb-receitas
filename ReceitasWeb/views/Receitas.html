@@ -1,0 +1,30 @@
+<div ng-init="loadAll()">
+
+	<h2>Receitas</h2>
+	
+	<br/><br/>
+    	
+	<input type="text" ng-model="receitas.filtro" class="input-lg" id="busca_receitas" placeholder="Buscar">
+	
+	<a ng-show="usuarioLogado()" type="button" class="btn btn-lg btn-primary" href="#/receitas/nova">Nova Receita</a>
+	
+	<br/><br/>
+
+	<table class="table table-striped">
+	  
+	  <thead>
+		  <tr>
+		    <th>Descrição</th>
+		    <th><a href="#/nova"><i class="icon-plus-sign"></i></a></th>
+		  </tr>
+	  </thead>
+	  
+	  <tbody>
+		<tr ng-repeat="receita in receitas | filter:receitas.filtro | orderBy:'descricao'">
+		    <td><a href="#receitas/{{ receita.oid }}/detalhes"> {{ receita.descricao }} </a></td>
+		</tr>
+	  </tbody>
+	  
+	</table>
+	
+</div>

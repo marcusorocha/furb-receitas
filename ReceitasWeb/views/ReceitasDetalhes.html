@@ -1,0 +1,45 @@
+<div ng-init="detalhar()">
+
+	<h2>Detalhes da Receita</h2>
+		
+	<span>Descrição: <b> {{ receita.descricao }} </b> </span>
+
+	<br/>
+	
+	<h3>Ingredientes</h3>
+	
+	<table class="table table-striped">
+		<thead> 
+			<tr>
+				<th>Quantidade</th>
+				<th>Unidade</th>
+			    <th>Ingrediente</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="ingrediente in ingredientes | orderBy:'nome' ">
+				<td> {{ ingrediente.quantidade }} </td>
+			    <td> {{ ingrediente.unidade }} </td>
+			    <td> {{ ingrediente.nome }} </td>
+            </tr>
+		</tbody>
+	</table>
+	
+	<h3>Passo a Passo</h3>
+    
+    <table class="table table-striped">
+		<thead> 
+			<tr>
+				<th>Ordem</th>
+			    <th>Passo</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="passo in passos | orderBy:'sequencia' ">
+				<td> {{ passo.sequencia }} </td>
+				<td> {{ passo.descricao }} </td>
+            </tr>
+		</tbody>
+	</table>
+    
+</div>

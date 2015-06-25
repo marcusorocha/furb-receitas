@@ -1,0 +1,66 @@
+<div>
+    
+    <h2>Nova Receita</h2>
+    
+    <form ng-submit="salvarReceita()">
+    
+		<input type="hidden" ng-model="novareceita.oid">
+		
+		<input type="text" ng-model="novareceita.descricao" size="30" placeholder="título" required>
+		
+		<input class="btn-primary" type="submit" ng-disabled="form.$invalid || novareceita.oid" value="salvar">
+	
+	</form>
+    
+    <h2>Incluir Ingredientes</h2>
+    
+    <form ng-submit="salvarIngrediente()">
+    
+    	<input type="hidden" ng-model="novoingrediente.oid">
+    	
+		<input type="text" ng-model="novoingrediente.nome" size="30" placeholder="nome" required>
+		
+		<input type="text" ng-model="novoingrediente.quantidade" size="30" placeholder="quantidade" required>
+		
+		<input type="text" ng-model="novoingrediente.unidade" size="30" placeholder="unidade de medida">
+		
+        
+        <input class="btn-primary" type="submit" ng-disabled="form.$invalid || !novareceita.oid" value="Salvar">
+	
+	</form>
+	    
+	<table class="table table-striped">
+		<thead> 
+			<tr>
+			    <th>Ingredientes</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr></tr>
+		</tbody>
+	</table>
+    
+    <h2>Incluir Passos</h2>
+
+    <form ng-submit="salvarPasso()">
+    
+	    <input type="hidden" ng-model="novopasso.oid">
+    	
+		<input type="text" ng-model="novopasso.descricao" size="50" placeholder="novo passo" required>
+    
+        <input class="btn-primary" type="submit" ng-disabled="form.$invalid || !novareceita.oid" value="Salvar">
+	
+	</form>
+	    
+	<table class="table table-striped">
+		<thead> 
+			<tr>
+			    <th>Passos</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr></tr>
+		</tbody>
+	</table>
+    
+</div>
