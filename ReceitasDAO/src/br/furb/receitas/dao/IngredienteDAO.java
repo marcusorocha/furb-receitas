@@ -141,7 +141,8 @@ public class IngredienteDAO
 	
 	public static IngredienteBean localizar(int oid) throws SQLException
 	{
-		String sql = "select * from INGREDIENTE where id = ?";
+		String sql = "select a.*, b.nome from INGREDIENTE a "
+				   + "inner join ESPECIARIA b on b.id = a.id_especiaria where a.id = ?";
 		
 		ConexaoSQL conSQL = new ConexaoSQL();
 		try
@@ -161,6 +162,7 @@ public class IngredienteDAO
 					ingrediente.setOID(rs.getInt("id"));
 					ingrediente.setReceita(rs.getInt("id_receita"));
 					ingrediente.setEspeciaria(rs.getInt("id_especiaria"));
+					ingrediente.setNome(rs.getString("nome"));
 					ingrediente.setUnidade(rs.getString("unidade"));
 					ingrediente.setQuantidade(rs.getDouble("quantidade"));
 					
@@ -182,7 +184,9 @@ public class IngredienteDAO
 	
 	public static List<IngredienteBean> listarDaReceita(int receita) throws SQLException
 	{
-		String sql = "select * from INGREDIENTE where id_receita = ?";
+		String sql = "select a.*, b.nome from INGREDIENTE a "
+				   + "inner join ESPECIARIA b on b.id = a.id_especiaria "
+				   + "where a.id_receita = ? ";
 		
 		List<IngredienteBean> ingredientes = new ArrayList<IngredienteBean>();
 		
@@ -205,6 +209,7 @@ public class IngredienteDAO
 					ingrediente.setOID(rs.getInt("id"));
 					ingrediente.setReceita(rs.getInt("id_receita"));
 					ingrediente.setEspeciaria(rs.getInt("id_especiaria"));
+					ingrediente.setNome(rs.getString("nome"));
 					ingrediente.setUnidade(rs.getString("unidade"));
 					ingrediente.setQuantidade(rs.getDouble("quantidade"));
 					

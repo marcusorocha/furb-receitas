@@ -18,8 +18,7 @@ import com.sun.jersey.spi.container.ContainerRequestFilter;
 @Priority(2000)
 public class AuthenticationFilter implements ContainerRequestFilter 
 {
-	public static final String AUTHENTICATION_HEADER = "Authorization";
-	
+	public static final String AUTHENTICATION_HEADER = "Authorization";	
 	
 	@Override
 	public ContainerRequest filter(ContainerRequest request) throws WebApplicationException
@@ -54,7 +53,7 @@ class Authorizer implements SecurityContext
         {
             public String getName() 
             {
-                return (user != null) ? userInfo.getUsuario().getNome() : "";
+                return (userInfo != null) ? userInfo.getUsuario().getNome() : "";
             }
         };
     }

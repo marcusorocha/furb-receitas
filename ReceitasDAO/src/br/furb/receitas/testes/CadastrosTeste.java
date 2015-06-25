@@ -9,10 +9,12 @@ import org.junit.Test;
 
 import br.furb.receitas.bean.EspeciariaBean;
 import br.furb.receitas.bean.IngredienteBean;
+import br.furb.receitas.bean.PassoBean;
 import br.furb.receitas.bean.ReceitaBean;
 import br.furb.receitas.bean.UsuarioBean;
 import br.furb.receitas.dao.EspeciariaDAO;
 import br.furb.receitas.dao.IngredienteDAO;
+import br.furb.receitas.dao.PassoDAO;
 import br.furb.receitas.dao.ReceitaDAO;
 import br.furb.receitas.dao.UsuarioDAO;
 import br.furb.receitas.db.ConexaoSQL;
@@ -172,6 +174,16 @@ public class CadastrosTeste
 			IngredienteDAO.incluir(xicarasAcucar);
 			IngredienteDAO.incluir(xicarasTrigo);
 			IngredienteDAO.incluir(colherFermento);
+			
+			PassoBean passo1 = new PassoBean(boloCenoura, 1, "Bata no liquidificador primeiro a cenoura com os ovos e o óleo, acrescente o açúcar e bata por uns 5 minutos");
+			PassoBean passo2 = new PassoBean(boloCenoura, 2, "Depois numa tigela ou na batedeira, coloque o restante dos ingredientes misturando tudo, menos o fermento");
+			PassoBean passo3 = new PassoBean(boloCenoura, 3, "Esse é misturado lentamente com uma colher");
+			PassoBean passo4 = new PassoBean(boloCenoura, 4, "Asse em forno preaquecido (180°C) por 40 minutos");
+			
+			PassoDAO.incluir(passo1);
+			PassoDAO.incluir(passo2);
+			PassoDAO.incluir(passo3);
+			PassoDAO.incluir(passo4);			
 			
 			assertTrue(true);
 		}

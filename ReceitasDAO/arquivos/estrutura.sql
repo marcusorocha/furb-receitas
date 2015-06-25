@@ -23,7 +23,7 @@ create table ESPECIARIA_ID (
 
 create table ESPECIARIA (
 	ID integer,
-	DESCRIACAO varchar(200),
+	NOME varchar(200),
 	primary key (ID)
 );
 
